@@ -1,0 +1,58 @@
+body {
+    background-color: black;
+    font-family: "Bitcount", system-ui;
+    font-weight: 300;
+    color: white;
+}
+
+h1{
+    text-align: center;
+    margin-top: 50px;
+}
+
+.background {
+    display: flex;
+    height: 85vh;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.player{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin:0px 100px;
+}
+
+.board{
+    display: grid;
+    grid-template-columns: 10px 200px 10px 200px 10px 200px 10px ;
+    grid-template-rows: 10px 200px 10px 200px 10px 200px 10px;
+    background-color: black;
+    border:solid red;
+    border-width: 6px ;
+}
+.boardline{
+    background-color: white;
+}
+/* Horizontal lines */
+.a { grid-area: 1/2/1/8; }
+.b { grid-area: 3/1/3/8; }
+.c { grid-area: 5/1/5/8; }
+.d { grid-area: 7/1/7/8; }
+
+/* Vertical lines */
+.e { grid-area: 1/1/8/1; }
+.f { grid-area: 1/3/8/3; }
+.g { grid-area: 1/5/8/5; }
+.h { grid-area: 1/7/8/7; }
+
+.drop-zone{
+    height:200px;
+    width:200px;
+}
+img{
+    height: 200px;
+    width: 200px;
+}
