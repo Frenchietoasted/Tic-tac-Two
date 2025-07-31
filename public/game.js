@@ -31,11 +31,20 @@ dropZone.on("drop",(event)=>{
 
 function turnCheck(){
     if (turn%2 === 0) { 
+        //Player 1 turn
+
         $("#1").attr("draggable",true);
         $("#2").attr("draggable",false);
+
+        $("h1").text("Player 1:");
+        $("h1").css({"border-bottom":"solid red"});
+        $(".board").css({"border-color":"red"});
     }
     else { 
         $("#1").attr("draggable",false);
         $("#2").attr("draggable",true);
+        $("h1").text("Player 2:");
+        $("h1").css({"border-bottom":"solid blue"});
+        $(".board").css({"border-color":"blue"});
     }
 }

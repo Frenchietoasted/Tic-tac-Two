@@ -7,7 +7,9 @@ body {
 
 h1{
     text-align: center;
+    font-size: 2rem;
     margin-top: 50px;
+    border-bottom: solid red;
 }
 
 .background {
@@ -30,7 +32,8 @@ h1{
     grid-template-columns: 10px 200px 10px 200px 10px 200px 10px ;
     grid-template-rows: 10px 200px 10px 200px 10px 200px 10px;
     background-color: black;
-    border:solid red;
+    border:solid;
+    border-color: red;
     border-width: 6px ;
 }
 .boardline{
