@@ -1,14 +1,14 @@
-const cross=$("#cross");
-const circle=$("#circle");
+const cross=$(".cross");
+const circle=$(".circle");
 const dropZone=$(".drop-zone");
-
+console.log(cross);
 var player1=[];
 var player2=[];
 var turn=0;
 var gameStart=false;
 var player1Score=0;
 var player2Score=0;
-
+var highlight;
 function stopDrag(event){
     event.preventDefault();
 }
@@ -26,23 +26,50 @@ $(document).on("keypress", function() {
 );
 
 function turnCheck(){
-    if (turn%2 === 0) { 
-        //Player 1 turn
+    if (turn<6){
+        if (turn%2 === 0) { 
+            //Player 1 turn
 
-        $("#p1").off("touchstart mousedown",stopDrag);
-        $("#p2").on("touchstart mousedown",stopDrag);
+            $("#p1").off("touchstart mousedown",stopDrag);
+            $("#p2").on("touchstart mousedown",stopDrag);
 
-        $("h1").text("Player One:");
-        $("h1").css({"border-bottom":"solid red"});
-        $(".board").css({"border-color":"red"});
-    } else { 
-        //player 2 turn
-        $("#p1").on("touchstart mousedown",stopDrag);
-        $("#p2").off("touchstart mousedown",stopDrag);
+            $("h1").text("Player One:");
+            $("h1").css({"border-bottom":"solid red"});
+            $(".board").css({"border-color":"red"});
+        } else { 
+            //player 2 turn
+            $("#p1").on("touchstart mousedown",stopDrag);
+            $("#p2").off("touchstart mousedown",stopDrag);
 
-        $("h1").text("Player Two:");
-        $("h1").css({"border-bottom":"solid blue"});
-        $(".board").css({"border-color":"blue"});
+            $("h1").text("Player Two:");
+            $("h1").css({"border-bottom":"solid blue"});
+            $(".board").css({"border-color":"blue"});
+        }
+    } else {
+        //New rules from here
+        $(".player").on("touchstart mousedown", stopDrag);
+        $("a>img").css({"display":"none"});
+        if (turn%2 === 0) { 
+            highlight=player1.shift();
+            $(".drop-zone#"+highlight).addClass("highlight");
+
+            $("#cross"+highlight).off("touchstart mousedown dragstart",stopDrag);
+            $("#cross"+highlight).attr("draggable",true);
+
+            $("h1").text("Player One:");
+            $("h1").css({"border-bottom":"solid red"});
+            $(".board").css({"border-color":"red"});
+        } else {
+            highlight=player2.shift();
+            $(".drop-zone#"+highlight).addClass("highlight");
+
+            $("#circle"+highlight).off("touchstart mousedown dragstart",stopDrag);
+            $("#circle"+highlight).attr("draggable",true);
+
+            $("h1").text("Player Two:");
+            $("h1").css({"border-bottom":"solid blue"});
+            $(".board").css({"border-color":"blue"});
+        }
     }
 }
 
@@ -65,16 +92,19 @@ function restartGame(winner){
     var winnerScore=winner===1? ++player1Score: ++player2Score;
     console.log
     $("#score"+winner).text(`Score: ${winnerScore}`)
+    if (turn>5) {
+        $("a>img").css({"display":"block"});
+    }
     player1=[];
     player2=[];
     gameStart=false;
 }
 
-cross.on('dragstart', (event) => {
+$(document).on("dragstart", ".cross", function (event) {
     event.originalEvent.dataTransfer.setData('text/plain', event.target.id);
 });
 
-circle.on('dragstart', (event) => {
+$(document).on("dragstart", ".circle", function (event) {
     event.originalEvent.dataTransfer.setData('text/plain', event.target.id);
 });
 
@@ -84,11 +114,20 @@ dropZone.on("dragover",(event)=>{
 
 dropZone.on("drop",(event)=>{
     console.log(event);
-    const id = event.originalEvent.dataTransfer.getData('text/plain');
-    const newImg= $("#"+id).clone();
+    event.preventDefault();
+
+    
+    const draggedId = event.originalEvent.dataTransfer.getData("text/plain");
+    const original = $("#" + draggedId);
+    const newImg = original.clone();
+    
+    if (turn>5) {
+        $(".drop-zone#"+highlight).removeClass("highlight");
+        $(".drop-zone#"+highlight).empty();
+    }
 
     const currentBlock=event.currentTarget.id; //The grid block where the X or O was placed
-    console.log(id);
+    console.log(draggedId);
 
     //Checking for overlap
     if (player1.includes(currentBlock) || player2.includes(currentBlock)){
@@ -96,13 +135,18 @@ dropZone.on("drop",(event)=>{
         console.log(turn);
         return;
     }
-
-    newImg.attr("id", currentBlock);
+    if (draggedId.includes("cross")){
+        newImg.attr("id", "cross"+currentBlock);
+    } else {
+        newImg.attr("id", "circle"+currentBlock);
+    }
+    
     newImg.attr("draggable",false);
-    console.log(event.currentTarget);
+    $("#img"+currentBlock).on("touchstart mousedown dragstart", stopDrag);
+    console.log("crosses:",cross);
     $(event.currentTarget).append(newImg);
     
-    if (id==="cross"){ 
+    if (draggedId.includes("cross")){ 
         player1.push(currentBlock); 
         winCheck(player1,"1");
     } else { 
@@ -120,3 +164,9 @@ const winOptions=[
     ["0","3","6"],["1","4","7"],["2","5","8"], //vertical win options
     ["0","4","8"],["2","4","6"] //diagonal wins
 ]
+$(document).on("dragstart", ".cross", function (event) {
+    event.originalEvent.dataTransfer.setData("text/plain", this.id);
+});
+$(document).on("dragstart", ".circle", function (event) {
+    event.originalEvent.dataTransfer.setData("text/plain", this.id);
+});

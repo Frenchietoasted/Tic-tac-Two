@@ -59,3 +59,12 @@ img{
     height: 200px;
     width: 200px;
 }
+.highlight{
+    
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+0%, 100% { background-color: transparent; }
+  50%      { background-color: white; }  
+}
