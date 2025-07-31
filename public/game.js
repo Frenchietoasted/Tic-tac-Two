@@ -1,24 +1,44 @@
 const cross=$("#cross");
 const circle=$("#circle");
 const dropZone=$(".drop-zone");
+
 var player1=[];
 var player2=[];
 var turn=0;
-var combo=[];
+var gameStart=false;
+var player1Score=0;
+var player2Score=0;
+
+function stopDrag(event){
+    event.preventDefault();
+}
+
+$(".player").on("touchstart mousedown", stopDrag);//pauses game till keypress
+
+$(document).on("keypress", function() {
+    if (!gameStart){
+        gameStart=true;
+        turn=0;
+        $(".drop-zone").empty();
+        $("h1").text("Player 1 will have the first move");
+        $("#p1").off("touchstart mousedown",stopDrag);
+    }}
+);
+
 function turnCheck(){
     if (turn%2 === 0) { 
         //Player 1 turn
 
-        $("#cross").attr("draggable",true);
-        $("#circle").attr("draggable",false);
+        $("#p1").off("touchstart mousedown",stopDrag);
+        $("#p2").on("touchstart mousedown",stopDrag);
 
         $("h1").text("Player One:");
         $("h1").css({"border-bottom":"solid red"});
         $(".board").css({"border-color":"red"});
     } else { 
         //player 2 turn
-        $("#cross").attr("draggable",false);
-        $("#circle").attr("draggable",true);
+        $("#p1").on("touchstart mousedown",stopDrag);
+        $("#p2").off("touchstart mousedown",stopDrag);
 
         $("h1").text("Player Two:");
         $("h1").css({"border-bottom":"solid blue"});
@@ -30,14 +50,24 @@ function winCheck(playerMoves,id){
     var combo;
     for (let winCombo of winOptions) {
         if (winCombo.every(cell => playerMoves.includes(cell))) {
-            combo= winCombo; // ✅ Found the winning combo
-            console.log("win",combo);
+            combo= winCombo; // The winning combo
         }
     }
     if (combo){
-        $("h1").text(`Player ${id} WINS!!`);
-        console.log(combo);
+        console.log("win",combo);
+        restartGame(id);
     }
+}
+
+function restartGame(winner){
+    $("h1").html(`Player ${winner} WINS!!<br>Press any key to restart`);
+    $(".player").on("touchstart mousedown", stopDrag);
+    var winnerScore=winner===1? ++player1Score: ++player2Score;
+    console.log
+    $("#score"+winner).text(`Score: ${winnerScore}`)
+    player1=[];
+    player2=[];
+    gameStart=false;
 }
 
 cross.on('dragstart', (event) => {
@@ -66,6 +96,7 @@ dropZone.on("drop",(event)=>{
         console.log(turn);
         return;
     }
+
     newImg.attr("id", currentBlock);
     newImg.attr("draggable",false);
     console.log(event.currentTarget);
@@ -73,14 +104,15 @@ dropZone.on("drop",(event)=>{
     
     if (id==="cross"){ 
         player1.push(currentBlock); 
-        winCheck(player1,1);
+        winCheck(player1,"1");
     } else { 
         player2.push(currentBlock);
-        winCheck(player2,2); 
+        winCheck(player2,"2"); 
     }
     console.log(player1,player2);
     turn++;
-    turnCheck();
+    console.log(turn);
+    if (gameStart){ turnCheck(); }
 });
 
 const winOptions=[
