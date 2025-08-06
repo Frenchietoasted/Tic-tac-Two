@@ -120,11 +120,6 @@ dropZone.on("drop",(event)=>{
     const draggedId = event.originalEvent.dataTransfer.getData("text/plain");
     const original = $("#" + draggedId);
     const newImg = original.clone();
-    
-    if (turn>5) {
-        $(".drop-zone#"+highlight).removeClass("highlight");
-        $(".drop-zone#"+highlight).empty();
-    }
 
     const currentBlock=event.currentTarget.id; //The grid block where the X or O was placed
     console.log(draggedId);
@@ -135,6 +130,13 @@ dropZone.on("drop",(event)=>{
         console.log(turn);
         return;
     }
+
+    //After turn 5 replacing the elements
+    if (turn>5) {
+        $(".drop-zone#"+highlight).removeClass("highlight");
+        $(".drop-zone#"+highlight).empty();
+    }
+    
     if (draggedId.includes("cross")){
         newImg.attr("id", "cross"+currentBlock);
     } else {
