@@ -1,16 +1,29 @@
+/* TODO: Change the .css selectors to .addClass and .removeClass for better clarity */
+
 const cross=$(".cross");
 const circle=$(".circle");
 const dropZone=$(".drop-zone");
-console.log(cross);
+
+//Keeps track of players
 var player1=[];
 var player2=[];
 var turn=0;
 var gameStart=false;
+
+//Logs score
 var player1Score=0;
 var player2Score=0;
 var highlight;
+
 function stopDrag(event){
     event.preventDefault();
+}
+
+const screenWidth=window.innerWidth;
+console.log(screenWidth)
+if (screenWidth<900){
+    //Checks for mobile user
+    console.log("chud gaye guru");
 }
 
 $(".player").on("touchstart mousedown", stopDrag);//pauses game till keypress
@@ -21,6 +34,10 @@ $(document).on("keypress", function() {
         turn=0;
         $(".drop-zone").empty();
         $("h1").text("Player 1 will have the first move");
+        
+        $("h1").css({"border-bottom":"solid red"});
+        $(".board").css({"border-color":"red"});
+
         $("#p1").off("touchstart mousedown",stopDrag);
     }}
 );
@@ -100,10 +117,12 @@ function restartGame(winner){
     gameStart=false;
 }
 
+// Drag event start for cross
 $(document).on("dragstart", ".cross", function (event) {
     event.originalEvent.dataTransfer.setData('text/plain', event.target.id);
 });
 
+// Drag event start for circle
 $(document).on("dragstart", ".circle", function (event) {
     event.originalEvent.dataTransfer.setData('text/plain', event.target.id);
 });
@@ -112,19 +131,17 @@ dropZone.on("dragover",(event)=>{
     event.preventDefault();
 });
 
+//On drop, shit goes down
 dropZone.on("drop",(event)=>{
     console.log(event);
     event.preventDefault();
 
-    
+    //get le data
     const draggedId = event.originalEvent.dataTransfer.getData("text/plain");
+
+    //get the dragged element
     const original = $("#" + draggedId);
-    const newImg = original.clone();
-    
-    if (turn>5) {
-        $(".drop-zone#"+highlight).removeClass("highlight");
-        $(".drop-zone#"+highlight).empty();
-    }
+    const newImg = original.clone(); 
 
     const currentBlock=event.currentTarget.id; //The grid block where the X or O was placed
     console.log(draggedId);
@@ -135,6 +152,16 @@ dropZone.on("drop",(event)=>{
         console.log(turn);
         return;
     }
+
+    if (turn>5) {
+        if (highlight===currentBlock){
+            alert("Place it in a new block");
+            return;
+        }
+        $(".drop-zone#"+highlight).removeClass("highlight");
+        $(".drop-zone#"+highlight).empty();
+    }
+
     if (draggedId.includes("cross")){
         newImg.attr("id", "cross"+currentBlock);
     } else {
@@ -153,6 +180,7 @@ dropZone.on("drop",(event)=>{
         player2.push(currentBlock);
         winCheck(player2,"2"); 
     }
+    
     console.log(player1,player2);
     turn++;
     console.log(turn);
@@ -164,9 +192,3 @@ const winOptions=[
     ["0","3","6"],["1","4","7"],["2","5","8"], //vertical win options
     ["0","4","8"],["2","4","6"] //diagonal wins
 ]
-$(document).on("dragstart", ".cross", function (event) {
-    event.originalEvent.dataTransfer.setData("text/plain", this.id);
-});
-$(document).on("dragstart", ".circle", function (event) {
-    event.originalEvent.dataTransfer.setData("text/plain", this.id);
-});

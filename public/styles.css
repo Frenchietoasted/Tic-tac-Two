@@ -59,6 +59,8 @@ img{
     height: 200px;
     width: 200px;
 }
+
+/* Blinking animation for the element which must be moved*/
 .highlight{
     
     animation: blink 1s step-start infinite;
@@ -67,4 +69,30 @@ img{
 @keyframes blink {
 0%, 100% { background-color: transparent; }
   50%      { background-color: white; }  
+}
+
+
+/* CSS for mobile screens (feel very free to change)*/
+@media screen and (max-width:900px) {
+    .background{
+        height:100vh;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        
+    }
+    .board {
+        grid-template-columns: 5px 100px 5px 100px 5px 100px 5px ;
+        grid-template-rows:5px 100px 5px 100px 5px 100px 5px ;
+    }
+    h1,h2.playertitle{
+        display:none;
+    }
+    img{
+        height:100px;
+        width:100px;
+    }
+    .player{
+        flex-direction: row;
+    }
 }
